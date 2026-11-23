@@ -115,4 +115,21 @@ object DtIcons {
             "M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2z"
         )
     }
+    val Upload: ImageVector by lazy {
+        lucide(
+            "upload",
+            "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4",
+            "M17 8l-5-5-5 5",
+            "M12 3v12"
+        )
+    }
+    val Banknote: ImageVector by lazy {
+        lucide(
+            "banknote",
+            "M2 6h20v12H2z",
+            "M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0",
+            "M6 12h.01",
+            "M18 12h.01"
+        )
+    }
 }

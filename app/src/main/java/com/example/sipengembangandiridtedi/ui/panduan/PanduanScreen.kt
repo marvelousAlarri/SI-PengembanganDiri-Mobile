@@ -33,8 +33,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,6 +54,7 @@ import com.example.sipengembangandiridtedi.ui.components.dtCard
 import com.example.sipengembangandiridtedi.ui.theme.Dt
 import com.example.sipengembangandiridtedi.ui.theme.DtIcons
 import com.example.sipengembangandiridtedi.util.inisial
+import com.example.sipengembangandiridtedi.util.toRupiah
 
 @Composable
 fun PanduanScreen(
@@ -153,13 +157,14 @@ private fun PanduanContent(jenis: List<JenisKegiatan>, onJenisClick: (JenisKegia
             }
         }
         AccordionCard(2, "Persyaratan dan Ketentuan bagi Pengusul", open == 2, { toggle(2) }) {
-            // Teks placeholder: ganti dengan isi asli dari desain/dokumen.
-            Column(Modifier.dtCard(12.dp, color = Dt.Bg).padding(14.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                listOf(
-                    "Pengusul adalah dosen aktif Departemen Teknik Elektro dan Informatika.",
-                    "Nominal pengajuan tidak melebihi sisa dana pengembangan diri.",
-                    "Seluruh dokumen persyaratan diunggah dalam format PDF (maks. 5 MB)."
-                ).forEach { Text("•  $it", color = Dt.TextMuted, fontSize = 13.sp) }
+            Column(Modifier.padding(horizontal = 4.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                PanduanHeading("Status dan kualifikasi")
+                PanduanBullet("Dosen tetap PNS atau Non PNS berdasarkan SK Rektor UGM.")
+                PanduanBullet("Berstatus aktif dan tidak sedang tugas belajar.")
+                PanduanBullet("Tercatat sebagai pegawai di DTEDI, Sekolah Vokasi.")
+                Spacer(Modifier.height(8.dp))
+                PanduanHeading("Bukti pelaksanaan kegiatan")
+                PanduanBody("Telah atau sedang melaksanakan pengembangan diri yang dibuktikan minimal dengan Surat Tugas dan/atau Bukti Bayar.")
             }
         }
         AccordionCard(3, "Jenis Pengembangan Diri", open == 3, { toggle(3) }) {
@@ -192,6 +197,118 @@ private fun PanduanContent(jenis: List<JenisKegiatan>, onJenisClick: (JenisKegia
                 }
             }
         }
+        AccordionCard(4, "Mekanisme Pemeriksaan dan Evaluasi", open == 4, { toggle(4) }) {
+            Column(Modifier.padding(horizontal = 4.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                PanduanHeading("01 Pemeriksaan")
+                PanduanBody("Usulan akan diperiksa oleh tim berdasarkan jenis pengembangan diri yang dapat diberikan dana bantuan.")
+                Spacer(Modifier.height(8.dp))
+                PanduanHeading("02 Evaluasi")
+                PanduanBody("Usulan akan dievaluasi oleh tim dengan mempertimbangkan sisa dana bantuan yang diberikan kepada masing-masing dosen aktif.")
+            }
+        }
+        AccordionCard(5, "Nilai Dana Bantuan", open == 5, { toggle(5) }) {
+            Column(Modifier.padding(horizontal = 4.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                MaksimalBantuanCard(7_000_000L)
+                Spacer(Modifier.height(8.dp))
+                PanduanHeading("Dana diberikan dalam bentuk:")
+                PanduanBullet("Reimbursement")
+                PanduanBullet("Pembayaran melalui PUMK")
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    "Berlaku untuk usulan yang lolos evaluasi dan telah disetujui oleh Ketua Departemen Teknik Elektro dan Informatika",
+                    color = Dt.TextMuted,
+                    fontSize = 12.sp
+                )
+            }
+        }
+        AccordionCard(6, "Prosedur Pengajuan", open == 6, { toggle(6) }) {
+            Row(
+                Modifier.fillMaxWidth().padding(top = 4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                LangkahProsedur(DtIcons.Book, "Baca\nPanduan", Modifier.weight(1f))
+                LangkahProsedur(DtIcons.File, "Siapkan\nDokumen", Modifier.weight(1f))
+                LangkahProsedur(DtIcons.Upload, "Ajukan", Modifier.weight(1f))
+                LangkahProsedur(DtIcons.Search, "Pemeriksaan", Modifier.weight(1f))
+                LangkahProsedur(DtIcons.Banknote, "Pencairan\nDana", Modifier.weight(1f))
+            }
+        }
+        AccordionCard(7, "Jadwal Pengajuan dan Pencairan Dana", open == 7, { toggle(7) }) {
+            Column(Modifier.padding(horizontal = 4.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                PanduanHeading("Batas pengajuan dokumen")
+                PanduanBody("Maksimal 4 bulan berikutnya setelah kegiatan dan memperoleh kuitansi/bukti pembelian.")
+                Spacer(Modifier.height(8.dp))
+                PanduanHeading("Batas kegiatan tahun 2026")
+                PanduanBullet("Kegiatan yang dapat diajukan terbatas sampai November 2026.")
+                PanduanBullet("Batas pengajuan berkas SPJ maksimal 4 Desember 2026.")
+                Spacer(Modifier.height(8.dp))
+                PanduanHeading("Pencairan Dana")
+                PanduanBody("Dilakukan secara berkala sesuai dengan pengajuan yang disetujui oleh Ketua Departemen.")
+            }
+        }
+    }
+}
+
+/* ---- komponen kecil khusus layar Panduan ---- */
+
+@Composable
+private fun PanduanHeading(text: String) {
+    Text(text, color = Dt.TextMain, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+}
+
+@Composable
+private fun PanduanBody(text: String) {
+    Text(text, color = Dt.TextMuted, fontSize = 13.sp)
+}
+
+@Composable
+private fun PanduanBullet(text: String) {
+    Row(Modifier.fillMaxWidth()) {
+        Box(
+            Modifier
+                .padding(start = 4.dp, top = 7.dp, end = 10.dp)
+                .size(5.dp)
+                .clip(CircleShape)
+                .background(Dt.TextMuted)
+        )
+        Text(text, color = Dt.TextMuted, fontSize = 13.sp, modifier = Modifier.weight(1f))
+    }
+}
+
+/** Kartu gradasi mint "Maksimal bantuan" pada accordion Nilai Dana Bantuan. */
+@Composable
+private fun MaksimalBantuanCard(nilai: Long) {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(Brush.verticalGradient(listOf(Color(0xFFA0F3DF), Color(0xFFD4FBF2))))
+            .padding(horizontal = 14.dp, vertical = 12.dp)
+    ) {
+        Text("Maksimal bantuan", color = Dt.TealDark, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+        Text(nilai.toRupiah(), color = Color(0xFF064E46), fontSize = 28.sp, fontWeight = FontWeight.ExtraBold)
+    }
+}
+
+/** Satu langkah pada baris ikon accordion Prosedur Pengajuan. */
+@Composable
+private fun LangkahProsedur(icon: ImageVector, label: String, modifier: Modifier = Modifier) {
+    Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(
+            Modifier.size(40.dp).clip(CircleShape).background(Dt.BlueSoft),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(icon, null, tint = Dt.Blue, modifier = Modifier.size(20.dp))
+        }
+        Spacer(Modifier.height(6.dp))
+        Text(
+            label,
+            color = Dt.TextMain,
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Medium,
+            textAlign = TextAlign.Center,
+            lineHeight = 14.sp
+        )
     }
 }
 

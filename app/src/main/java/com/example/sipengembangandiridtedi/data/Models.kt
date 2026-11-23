@@ -56,6 +56,15 @@ data class JenisKegiatan(
 
 data class FaqItem(val tanya: String, val jawab: String)
 
+data class Notifikasi(
+    val id: Int,
+    val judul: String,
+    val pesan: String,
+    val waktu: String,
+    val dibaca: Boolean,
+    val pengajuanId: Int? = null
+)
+
 /** Data dummy sesuai mockup. TODO API: ganti dengan repository yang memanggil REST API. */
 object FakeData {
     val profil = Profil(nama = "Ahmad Subakti", prodi = "Teknologi Rekayasa Perangkat Lunak", role = "Dosen")
@@ -99,4 +108,12 @@ object FakeData {
             "Dosen aktif Departemen Teknik Elektro dan Informatika, Sekolah Vokasi, Universitas Gadjah Mada."
         )
     }
+
+    val notifikasi = listOf(
+        Notifikasi(1, "Pengajuan Disetujui", "Pengajuan dana bantuan sertifikasi telah disetujui.", "2 jam yang lalu", false, 2),
+        Notifikasi(2, "Catatan Revisi", "Mohon perbaiki dokumen SPJ pada pengajuan #1.", "1 hari yang lalu", false, 1),
+        Notifikasi(3, "Pengajuan Diterima", "Pengajuan baru Anda telah diterima dan sedang diperiksa.", "3 hari yang lalu", true, 3)
+    )
+
+    fun detail(id: Int): Pengajuan? = (riwayat + draf).firstOrNull { it.id == id }
 }
